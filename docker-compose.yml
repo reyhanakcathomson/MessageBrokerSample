@@ -1,0 +1,15 @@
+services:
+  test-mq:
+    image: rabbitmq:3.11.7-management
+    container_name: test-queue-container
+    hostname: test-queue
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+        - 5672:5672
+        - 15672:15672
+    networks:
+      - services-network
+networks:
+  services-network:
