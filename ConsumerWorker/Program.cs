@@ -1,7 +1,6 @@
 using ConsumerWorker;
 using Infrastructure.Extensions;
 using Infrastructure.MessageBroker;
-using Microsoft.Extensions.Options;
 
 var builder = Host.CreateDefaultBuilder(args);
 
@@ -12,11 +11,10 @@ builder.ConfigureAppConfiguration((hostingContext, config) =>
 
 builder.ConfigureServices((hostContext, services) =>
 {
-    services.Configure<MessageBrokerSettings>(hostContext.Configuration.GetSection("MessageBroker"));
 
-    services.AddSingleton(sp => sp.GetRequiredService<IOptions<MessageBrokerSettings>>().Value);
-
-    services.AddCustomMassTransit();
+    MessageBrokerSettings messageBrokerSettings = hostContext.Configuration.GetSection("MessageBroker").Get<MessageBrokerSettings>()
+      ?? throw new ArgumentNullException(nameof(MessageBrokerSettings));
+    services.AddCustomMassTransitForConsumer(messageBrokerSettings);
 
     services.AddHostedService<ConsumerService>();
 });

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Consumers;
 
-public sealed class LedgerDataUploadedSendEmailConsumer : IConsumer<LedgerDataUploaded>
+public sealed class LedgerDataUploadedSendEmailConsumer : IConsumer<LedgerDataUploadedTopicMessage>
 {
     private readonly ILogger<LedgerDataUploadedSendEmailConsumer> _logger;
 
@@ -14,9 +14,12 @@ public sealed class LedgerDataUploadedSendEmailConsumer : IConsumer<LedgerDataUp
         _logger = logger;
     }
 
-    public Task Consume(ConsumeContext<LedgerDataUploaded> context)
+    public Task Consume(ConsumeContext<LedgerDataUploadedTopicMessage> context)
     {
         _logger.LogInformation($"File Uploaded email sent => {JsonSerializer.Serialize(context.Message)}");
         return Task.CompletedTask;
     }
 }
+
+
+

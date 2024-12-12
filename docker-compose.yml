@@ -1,8 +1,8 @@
 services:
   test-mq:
     image: rabbitmq:3.11.7-management
-    container_name: test-queue-container
-    hostname: test-queue
+    container_name: message-broker-container
+    hostname: message-broker-container-host
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest

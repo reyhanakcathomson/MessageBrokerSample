@@ -2,6 +2,8 @@ using Infrastructure.Abstractions;
 using Infrastructure.Extensions;
 using Infrastructure.MessageBroker;
 using Infrastructure.MessageContracts;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
 
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<MessageBrokerSettings>>().Value);
-
-builder.Services.AddCustomMassTransit();
+MessageBrokerSettings messageBrokerSettings =  builder.Configuration.GetSection("MessageBroker").Get<MessageBrokerSettings>()
+    ?? throw new ArgumentNullException(nameof(MessageBrokerSettings));
+builder.Services.AddCustomMassTransitForProducer(messageBrokerSettings);
 
 builder.Services.AddTransient<IEventBus, EventBus>();
 
@@ -30,8 +31,11 @@ app.UseHttpsRedirection();
 
 app.MapPost("/upload-ledger-data", async (string fileName, IEventBus eventBus) =>
     {
-        await eventBus.PublishAsync(new LedgerDataUploaded
+        await eventBus.SendAsync($"queue:{MessageBrokerConstants.LedgerDataAnalyzeQueue}", new LedgerDataUploaded
             { FileName = fileName, UploadedDate = DateTime.Now.ToUniversalTime() });
+
+        await eventBus.PublishAsync(new LedgerDataUploadedTopicMessage
+        { FileName = fileName, UploadedDate = DateTime.Now.ToUniversalTime(), Info1="test1" });
         return Results.Ok();
     })
     .WithName("upload-ledger-data")

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Consumers;
 
-public sealed class LedgerDataUploadedLogConsumer : IConsumer<LedgerDataUploaded>
+public sealed class LedgerDataUploadedLogConsumer : IConsumer<LedgerDataUploadedTopicMessage>
 {
     private readonly ILogger<LedgerDataUploadedLogConsumer> _logger;
 
@@ -14,7 +14,7 @@ public sealed class LedgerDataUploadedLogConsumer : IConsumer<LedgerDataUploaded
         _logger = logger;
     }
 
-    public Task Consume(ConsumeContext<LedgerDataUploaded> context)
+    public Task Consume(ConsumeContext<LedgerDataUploadedTopicMessage> context)
     {
         _logger.LogInformation($"File Uploaded logged => {JsonSerializer.Serialize(context.Message)}");
         return Task.CompletedTask;

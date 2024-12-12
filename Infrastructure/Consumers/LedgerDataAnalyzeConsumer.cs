@@ -20,3 +20,18 @@ public sealed class LedgerDataAnalyzeConsumer : IConsumer<LedgerDataUploaded>
         return Task.CompletedTask;
     }
 }
+public class LedgerDataAnalyzeConsumerDefinition : ConsumerDefinition<LedgerDataAnalyzeConsumer>
+{
+    public LedgerDataAnalyzeConsumerDefinition()
+    {
+
+        // not working!!!
+        //  EndpointName = MessageBrokerConstants.LedgerDataAnalyzeQueue;
+
+        // limit the number of messages consumed concurrently
+        // this applies to the consumer only, not the endpoint
+        ConcurrentMessageLimit = 4;
+
+    }
+
+}
