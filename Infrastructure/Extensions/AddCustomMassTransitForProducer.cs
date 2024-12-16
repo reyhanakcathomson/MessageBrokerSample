@@ -1,9 +1,7 @@
-using Infrastructure.Consumers;
 using Infrastructure.MessageBroker;
 using Infrastructure.MessageContracts;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
 
 namespace Infrastructure.Extensions;
 
@@ -13,12 +11,14 @@ public static partial class MassTransitExtensions
         MessageBrokerSettings messageBrokerSettings)
     {
 
-
         services.AddMassTransit(configure =>
         {
-            configure.AddServiceBusMessageScheduler();          
+            configure.AddServiceBusMessageScheduler();      
 
             configure.SetKebabCaseEndpointNameFormatter();
+
+             configure.AddRequestClient<LedgerDataCancelRequest>();
+
 
             switch (messageBrokerSettings.Type)
             {
@@ -34,9 +34,9 @@ public static partial class MassTransitExtensions
                             h.Username(settings.Username);
                             h.Password(settings.Password);
                         });
-                       
 
-                        cfg.Publish<LedgerDataUploaded>(p => { p.ExchangeType = ExchangeType.Direct; });                     
+                        cfg.ConfigureEndpoints(context);
+
                     });
                     break;
                 case ServiceBusType.AzureBus:
@@ -47,10 +47,8 @@ public static partial class MassTransitExtensions
                            cfg.UseMessageRetry(retry => retry.Interval(2, TimeSpan.FromSeconds(3)));
 
                            cfg.Host(messageBrokerSettings.AzureServiceBus.ConnectionString);
+                           cfg.ConfigureEndpoints(context);
 
-                           //Create a topic for LedgerDataUploaded
-                           cfg.Message<LedgerDataUploadedTopicMessage>(m => m.SetEntityName(MessageBrokerConstants.LedgerDataUploadedTopic));                        
-                          
                        });
 
                     break;

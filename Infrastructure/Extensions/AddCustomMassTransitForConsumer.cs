@@ -1,9 +1,7 @@
 ﻿using Infrastructure.Consumers;
 using Infrastructure.MessageBroker;
-using Infrastructure.MessageContracts;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
 
 namespace Infrastructure.Extensions;
 
@@ -21,6 +19,7 @@ public static partial class MassTransitExtensions
             configure.AddConsumer<LedgerDataUploadedSendEmailConsumer>();
             configure.AddConsumer<LedgerDataUploadedLogConsumer>();
             configure.AddConsumer<LedgerDataAnalyzeConsumer>(typeof(LedgerDataAnalyzeConsumerDefinition));
+            configure.AddConsumer<LedgerDataCancelConsumer>();
 
             configure.SetKebabCaseEndpointNameFormatter();
 
@@ -37,14 +36,15 @@ public static partial class MassTransitExtensions
                             h.Username(settings.Username);
                             h.Password(settings.Password);
                         });
+                        cfg.ConfigureEndpoints(context);
 
-                        cfg.Publish<LedgerDataUploaded>(p => { p.ExchangeType = ExchangeType.Direct; });
+                      /*  cfg.Publish<LedgerDataUploaded>(p => { p.ExchangeType = ExchangeType.Direct; });
                         cfg.ReceiveEndpoint("ledger-data-uploaded-log",
                             e => { e.ConfigureConsumer<LedgerDataUploadedLogConsumer>(context); });
                         cfg.ReceiveEndpoint("ledger-data-uploaded-send-email",
                             e => { e.ConfigureConsumer<LedgerDataUploadedSendEmailConsumer>(context); });
                         cfg.ReceiveEndpoint(MessageBrokerConstants.LedgerDataAnalyzeQueue,
-                            e => { e.ConfigureConsumer<LedgerDataAnalyzeConsumer>(context); });
+                            e => { e.ConfigureConsumer<LedgerDataAnalyzeConsumer>(context); });*/
                     });
                     break;
                 case ServiceBusType.AzureBus:
@@ -56,6 +56,9 @@ public static partial class MassTransitExtensions
 
                            cfg.UseMessageRetry(retry => retry.Interval(2, TimeSpan.FromSeconds(3)));
 
+                           cfg.ConfigureEndpoints(context);
+
+/*
                            cfg.Message<LedgerDataUploadedTopicMessage>(m => m.SetEntityName(MessageBrokerConstants.LedgerDataUploadedTopic));
                            cfg.SubscriptionEndpoint<LedgerDataUploadedTopicMessage>(MessageBrokerConstants.LedgerDataUploadedTopic, configurator =>
                            {
@@ -63,7 +66,7 @@ public static partial class MassTransitExtensions
                                configurator.ConfigureConsumer<LedgerDataUploadedLogConsumer>(context);
                            });
                            cfg.ReceiveEndpoint(MessageBrokerConstants.LedgerDataAnalyzeQueue,
-                               e => { e.ConfigureConsumer<LedgerDataAnalyzeConsumer>(context); });
+                               e => { e.ConfigureConsumer<LedgerDataAnalyzeConsumer>(context); });*/
                        });
 
                     break;

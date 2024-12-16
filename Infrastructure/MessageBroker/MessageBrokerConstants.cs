@@ -4,5 +4,6 @@
     {
         public static string LedgerDataUploadedTopic = "ledger-data-uploaded-topic";
         public static string LedgerDataAnalyzeQueue = "ledger-data-analyze";
+        public static string LedgerDataCancelQueue = "ledger-data-cancel";
     }
 }
