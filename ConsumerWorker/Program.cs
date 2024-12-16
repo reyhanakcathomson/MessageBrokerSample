@@ -1,4 +1,5 @@
 using ConsumerWorker;
+using Infrastructure.Entities;
 using Infrastructure.Extensions;
 using Infrastructure.MessageBroker;
 
@@ -14,6 +15,8 @@ builder.ConfigureServices((hostContext, services) =>
 
     MessageBrokerSettings messageBrokerSettings = hostContext.Configuration.GetSection("MessageBroker").Get<MessageBrokerSettings>()
       ?? throw new ArgumentNullException(nameof(MessageBrokerSettings));
+    services.AddScoped<ILedgerDataRepository, LedgerDataRepository>();
+
     services.AddCustomMassTransitForConsumer(messageBrokerSettings);
 
     services.AddHostedService<ConsumerService>();

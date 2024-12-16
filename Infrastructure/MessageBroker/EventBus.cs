@@ -18,7 +18,7 @@ public sealed class EventBus :IEventBus
         if (message == null)
             throw new ArgumentNullException(nameof(message));
 
-        var sendEndpoint = await _bus.GetSendEndpoint(new Uri(destinationUrl));
+        var sendEndpoint = await _bus.GetSendEndpoint(new Uri($"queue:{destinationUrl}"));
 
         await sendEndpoint.Send(message, cancellationToken);
     }
