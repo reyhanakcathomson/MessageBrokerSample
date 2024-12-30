@@ -105,9 +105,25 @@ To specify which message broker to use:
       ```
 
 ## Usage
-Sending Messages: Use the MessageBrokerAPI to send messages.
+Sending Messages: Use "/upload-ledger-data" endpoint in API to send/publish messages.
 
 Receiving Messages: The ConsumerWorker automatically listens for messages on the configured queue and processes them as they arrive.
 
+Request/Response Pattern: Use "/cancel-ledger-data" endpoint in API to use a request client to publish requests and wait for a response. The request client is asynchronous, and supports use of the await keyword since it returns a Task.
+
 Conclusion
 This POC provides a basic setup for integrating RabbitMQ and Azure Service Bua with a .NET application using MassTransit. It demonstrates the roles of a publisher and a consumer in a microservices architecture, facilitating learning and experimentation with message-driven systems.
+
+## Broker Topology
+### Send
+![send (1)](https://github.com/user-attachments/assets/1c50b7a8-ba41-4727-84d7-ceef8e5f6f24)
+<br />
+<br />
+### Publish
+![publish](https://github.com/user-attachments/assets/48680889-8160-4e53-b9a5-c452844575cc)
+<br />
+<br />
+### Request/Response Pattern
+![request_response](https://github.com/user-attachments/assets/6cee0329-11ad-42cf-92cb-f4d3e549bbaa)
+<br />
+<br />
