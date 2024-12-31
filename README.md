@@ -124,6 +124,6 @@ This POC provides a basic setup for integrating RabbitMQ and Azure Service Bua w
 <br />
 <br />
 ### Request/Response Pattern
-![request_response](https://github.com/user-attachments/assets/6cee0329-11ad-42cf-92cb-f4d3e549bbaa)
+![request1](https://github.com/user-attachments/assets/eff9a251-c1f0-4c6c-89da-8906a26f5e95)
 <br />
 <br />
