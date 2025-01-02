@@ -7,58 +7,45 @@ namespace Infrastructure.Extensions;
 
 public static partial class MassTransitExtensions
 {
-    public static IServiceCollection AddCustomMassTransitForProducer(this IServiceCollection services,
-        MessageBrokerSettings messageBrokerSettings)
-    {
+	public static IServiceCollection AddCustomMassTransitForProducer(this IServiceCollection services,
+			MessageBrokerSettings messageBrokerSettings)
+	{
+		services.AddMassTransit(configure =>
+				{
+					configure.SetKebabCaseEndpointNameFormatter();
+					configure.AddRequestClient<LedgerDataCancelRequest>();
 
-        services.AddMassTransit(configure =>
-        {
-            configure.AddServiceBusMessageScheduler();      
+					switch (messageBrokerSettings.Type)
+					{
+						case ServiceBusType.RabbitMQ:
+							configure.UsingRabbitMq((context, cfg) =>
+									{
+										var settings = messageBrokerSettings.RabbitMq;
+										cfg.Host(new Uri(settings.Host), h =>
+										{
+														h.Username(settings.Username);
+														h.Password(settings.Password);
+													});
 
-            configure.SetKebabCaseEndpointNameFormatter();
+										cfg.ConfigureEndpoints(context);
 
-             configure.AddRequestClient<LedgerDataCancelRequest>();
+									});
+							break;
+						case ServiceBusType.AzureBus:
+							configure.UsingAzureServiceBus(
+										 (context, cfg) =>
+										 {
+											 cfg.Host(messageBrokerSettings.AzureServiceBus.ConnectionString);
+											 cfg.ConfigureEndpoints(context);
 
+										 });
 
-            switch (messageBrokerSettings.Type)
-            {
-                case ServiceBusType.RabbitMQ:
-                    configure.UsingRabbitMq((context, cfg) =>
-                    {
-                        cfg.UseServiceBusMessageScheduler();
-                        cfg.UseMessageRetry(retry => retry.Interval(2, TimeSpan.FromSeconds(3)));
+							break;
+						default:
+							break;
+					}
+				});
 
-                        var settings = messageBrokerSettings.RabbitMq;
-                        cfg.Host(new Uri(settings.Host), h =>
-                        {
-                            h.Username(settings.Username);
-                            h.Password(settings.Password);
-                        });
-
-                        cfg.ConfigureEndpoints(context);
-
-                    });
-                    break;
-                case ServiceBusType.AzureBus:
-                    configure.UsingAzureServiceBus(
-                       (context, cfg) =>
-                       {
-                           cfg.UseServiceBusMessageScheduler();
-                           cfg.UseMessageRetry(retry => retry.Interval(2, TimeSpan.FromSeconds(3)));
-
-                           cfg.Host(messageBrokerSettings.AzureServiceBus.ConnectionString);
-                           cfg.ConfigureEndpoints(context);
-
-                       });
-
-                    break;
-                default:
-                    break;
-            }
-
-
-        });
-
-        return services;
-    }
+		return services;
+	}
 }
