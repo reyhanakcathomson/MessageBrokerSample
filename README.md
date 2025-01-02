@@ -114,7 +114,7 @@ Request/Response Pattern: Use "/cancel-ledger-data" endpoint in API to use a req
 Conclusion
 This POC provides a basic setup for integrating RabbitMQ and Azure Service Bua with a .NET application using MassTransit. It demonstrates the roles of a publisher and a consumer in a microservices architecture, facilitating learning and experimentation with message-driven systems.
 
-## Broker Topology
+## Azure Server Bus - Broker Topology
 ### Send
 ![send (1)](https://github.com/user-attachments/assets/1c50b7a8-ba41-4727-84d7-ceef8e5f6f24)
 <br />
@@ -124,6 +124,20 @@ This POC provides a basic setup for integrating RabbitMQ and Azure Service Bua w
 <br />
 <br />
 ### Request/Response Pattern
-![request1](https://github.com/user-attachments/assets/eff9a251-c1f0-4c6c-89da-8906a26f5e95)
+![Azure-Request drawio](https://github.com/user-attachments/assets/0eb36638-99c5-4ddd-b80e-ad642e3d71a8)
+<br />
+<br />
+
+## RabbitMQ - Broker Topology
+### Send
+![RabbitMq-Send drawio](https://github.com/user-attachments/assets/688956ea-850a-4c32-9a37-c90ab73762ba)
+<br />
+<br />
+### Publish
+![RabbitMq-Publish drawio](https://github.com/user-attachments/assets/2521f16f-2a32-49b2-a42e-65a535f11b0d)
+<br />
+<br />
+### Request/Response Pattern
+![RabbitMq-Request drawio](https://github.com/user-attachments/assets/94b9dbc3-524d-40c5-a669-c43982c07db4)
 <br />
 <br />
